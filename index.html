@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Différence de Date</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-yellow-50 min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white p-6 rounded shadow-md w-full max-w-md space-y-4">
+        <h1 class="text-2xl font-bold text-yellow-700 text-center">Calcul de Date</h1>
+
+        <label for="date-input" class="block font-semibold">Entrez une date (JJ/MM/AAAA) :</label>
+        <input id="date-input" type="text" placeholder="ex: 1/2/2000"
+            class="w-full p-2 border border-yellow-300 rounded focus:outline-none focus:ring-2 focus:ring-yellow-500" />
+
+        <button id="btn-calc"
+            class="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700 w-full">Calculer</button>
+
+        <div id="result" class="mt-4 space-y-2 text-yellow-800 font-medium hidden">
+            <p id="jours"></p>
+            <p id="mois"></p>
+            <p id="annees"></p>
+            <p id="secondes"></p>
+        </div>
+    </div>
+
+    <div id="help-btn"
+        class=" absolute bottom-0 right-0 m-2 p-2 bg-yellow-600 rounded-full cursor-pointer text-white shadow-md font-bold text-2xl flex gap-x-2">
+        what's
+        <img src="/aide.png" class="w-10" alt="">
+    </div>
+
+    <div id="help"
+        class="hidden absolute bg-yellow-700 text-yellow-50 p-6 max-w-md rounded-lg shadow-lg space-y-6 transition-all ">
+        <h3 class="text-3xl text-yellow-700 bg-yellow-50 rounded-lg text-center font-bold shadow-lg py-2 px-4">
+            Explication de l'application
+        </h3>
+
+        <p class="text-lg">
+            Cette application permet de calculer la différence entre une date que vous entrez et le <strong>1er janvier
+                1970</strong>, également appelé l'époque Unix.
+        </p>
+
+        <p class="text-lg font-semibold">Fonctionnalités :</p>
+
+        <ol class="list-decimal pl-6 space-y-3">
+            <li class="text-lg">
+                Entrez une date au format <code>JJ/MM/AAAA</code> dans le champ prévu à cet effet.
+            </li>
+            <li class="text-lg">
+                En appuyant sur le bouton <strong>"Calculer"</strong>, l'application vous renverra :
+                <ul class="list-disc pl-8 space-y-2 mt-2">
+                    <li>Le nombre de jours écoulés depuis le 1er janvier 1970.</li>
+                    <li>Le nombre de mois (approximatif) écoulés.</li>
+                    <li>Le nombre d'années (approximatif) écoulées.</li>
+                    <li>Le nombre de secondes écoulées.</li>
+                </ul>
+            </li>
+        </ol>
+    </div>
+
+
+    <script>
+        const btnHelp = document.querySelector('#help-btn');
+        const help = document.querySelector('#help');
+
+        let state_help = false;
+
+        function showHelp() {
+            state_help = !state_help;
+
+            if (state_help) {
+                help.classList.remove('hidden');
+                // Ajout de la classe d'animation
+                setTimeout(() => {
+                    help.classList.remove('opacity-0');
+                    help.classList.add('opacity-100');
+                }, 10); // Petite attente avant d'activer l'animation
+            } else {
+                // Ajout de la classe d'animation
+                help.classList.remove('opacity-100');
+                help.classList.add('opacity-0');
+                setTimeout(() => {
+                    help.classList.add('hidden');
+                }, 500); // Temps correspondant à l'animation d'opacité
+            }
+        }
+
+        btnHelp.onclick = () => showHelp();
+
+        function calculerDiff(dateStr) {
+            const [jour, mois, annee] = dateStr.split('/').map(Number);
+            const dateEntree = new Date(annee, mois - 1, jour);
+            const dateBase = new Date(1970, 0, 1);
+
+            const diffMs = dateEntree - dateBase;
+
+            const secondes = Math.floor(diffMs / 1000);
+            const jours = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            const month = Math.floor(jours / 30.44); // approx moyenne
+            const annees = Math.floor(jours / 365.25); // compte les années bissextiles
+            console.log(month);
+
+            return { jours, month, annees, secondes };
+        }
+
+        document.getElementById('btn-calc').addEventListener('click', () => {
+            const input = document.getElementById('date-input').value.trim();
+            const resultDiv = document.getElementById('result');
+
+            if (!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(input)) {
+                alert("Veuillez entrer une date valide au format JJ/MM/AAAA");
+                return;
+            }
+
+            const { jours, month, annees, secondes } = calculerDiff(input);
+
+
+            document.getElementById('jours').innerText = `Jours depuis 01/01/1970 : ${jours}`;
+            document.getElementById('mois').innerText = `Mois (approximatifs) : ${month}`;
+            document.getElementById('annees').innerText = `Années (approximatives) : ${annees}`;
+            document.getElementById('secondes').innerText = `Secondes : ${secondes.toLocaleString()}`;
+            resultDiv.classList.remove('hidden');
+        });
+    </script>
+</body>
+
+</html>
