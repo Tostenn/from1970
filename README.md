@@ -21,6 +21,12 @@ Elle affiche le **nombre de jours, mois, années et secondes** écoulés depuis 
 
 ---
 
+## 🌐 Demo en ligne
+
+👉 [Consulter le site](https://tostenn.github.io/from1970/)
+
+---
+
 ## 💻 Aperçu
 
 Tu peux tester le projet en local :
